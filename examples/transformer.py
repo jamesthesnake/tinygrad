@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
-import os
 import numpy as np
 import random
 
-from tinygrad.tensor import Device
-from extra.utils import get_parameters
+from tinygrad.state import get_parameters
+from tinygrad.nn.optim import Adam
 from extra.training import train, evaluate
 from models.transformer import Transformer
-from tinygrad.optim import Adam
 
-# dataset idea from https://github.com/karpathy/minGPT/blob/master/play_math.ipynb
+# dataset idea from https://github.com/karpathy/minGPT/blob/master/projects/adder/adder.py
 def make_dataset():
   ds = []
   for i in range(100):
@@ -17,18 +15,15 @@ def make_dataset():
       s = i+j
       ds.append([i//10, i%10, j//10, j%10, s//100, (s//10)%10, s%10])
   random.shuffle(ds)
-  ds = np.array(ds)
+  ds = np.array(ds).astype(np.float32)
   ds_X = ds[:, 0:6]
   ds_Y = np.copy(ds[:, 1:])
   ds_X_train, ds_X_test = ds_X[0:8000], ds_X[8000:]
   ds_Y_train, ds_Y_test = ds_Y[0:8000], ds_Y[8000:]
-
   return ds_X_train, ds_Y_train, ds_X_test, ds_Y_test
 
-from tinygrad.optim import Adam
 if __name__ == "__main__":
   model = Transformer(10, 6, 2, 128, 4, 32)
-
   X_train, Y_train, X_test, Y_test = make_dataset()
   lr = 0.003
   for i in range(10):

@@ -4,7 +4,7 @@ import os
 import sys
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(), 'test'))
-from test_mnist import fetch_mnist
+from extra.datasets import fetch_mnist
 from tqdm import trange
 
 def augment_img(X, rotate=10, px=3):
@@ -20,9 +20,10 @@ def augment_img(X, rotate=10, px=3):
   return Xaug
 
 if __name__ == "__main__":
-  from test_mnist import fetch_mnist
   import matplotlib.pyplot as plt
   X_train, Y_train, X_test, Y_test = fetch_mnist()
+  X_train = X_train.reshape(-1, 28, 28).astype(np.uint8)
+  X_test = X_test.reshape(-1, 28, 28).astype(np.uint8)
   X = np.vstack([X_train[:1]]*10+[X_train[1:2]]*10)
   fig, a = plt.subplots(2,len(X))
   Xaug = augment_img(X)
